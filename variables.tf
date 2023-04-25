@@ -134,8 +134,21 @@ variable "ip_address" {
 variable "ip_protocol" {
   description = "The IP protocol for the backend and frontend forwarding rule. TCP or UDP."
   type        = string
-  default     = "TCP"
+  default     = null
 }
+
+variable "lb_type" {
+  description = "The lb type. Can be HTTP, TCP or UDP"
+  type        = string
+  default     = null
+}
+
+variable "port_name" {
+  description = "The port name for the backend service."
+  type        = string
+  default     = null
+}
+
 
 variable "service_label" {
   description = "Service label is used to create internal DNS name"

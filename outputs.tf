@@ -16,15 +16,21 @@
 
 output "ip_address" {
   description = "The internal IP assigned to the regional forwarding rule."
-  value       = google_compute_forwarding_rule.default.ip_address
+  value       = var.lb_type != "HTTP" ? google_compute_forwarding_rule.default.ip_address : google_compute_forwarding_rule.http.ip_address
 }
 
 output "forwarding_rule" {
   description = "The forwarding rule self_link."
-  value       = google_compute_forwarding_rule.default.self_link
+  value       = var.lb_type != "HTTP" ? google_compute_forwarding_rule.default.self_link : google_compute_forwarding_rule.http.self_link
 }
 
 output "forwarding_rule_id" {
   description = "The forwarding rule id."
-  value       = google_compute_forwarding_rule.default.id
+  value       = var.lb_type != "HTTP" ? google_compute_forwarding_rule.default.id : google_compute_forwarding_rule.http.id
 }
+
+output "url_map_http" {
+  description = "The URL map self_link."
+  value       = var.lb_type == "HTTP" ? google_compute_region_url_map.http.self_link : null
+}
+

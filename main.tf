@@ -30,7 +30,7 @@ data "google_compute_subnetwork" "network" {
 resource "google_compute_forwarding_rule" "http" {
   count                 = var.lb_type == "HTTP" ? 1 : 0
   
-  project               = var.project_id
+  project               = var.project
   name                  = var.name
   region                = var.region
   network               = data.google_compute_network.network.self_link
@@ -62,6 +62,24 @@ resource "google_compute_forwarding_rule" "default" {
   all_ports             = var.all_ports
   service_label         = var.service_label
   labels                = var.labels
+}
+
+resource "google_compute_region_target_http_proxy" "http" {
+  count    = var.lb_type == "HTTP" ? 1 : 0
+
+  project  = var.project
+  region   = var.region
+  name     = "${var.name}-http-proxy"
+  url_map  = google_compute_region_url_map.http[0].id
+}
+
+resource "google_compute_region_url_map" "http" {
+  count           = var.lb_type == "HTTP" ? 1 : 0
+
+  project         = var.project
+  region          = var.region
+  name            = "${var.name}-lb"
+  default_service = google_compute_region_backend_service.default.id
 }
 
 resource "google_compute_region_backend_service" "default" {

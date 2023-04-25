@@ -27,7 +27,27 @@ data "google_compute_subnetwork" "network" {
   region  = var.region
 }
 
+resource "google_compute_forwarding_rule" "http" {
+  count                 = var.lb_type == "HTTP" ? 1 : 0
+  
+  project               = var.project_id
+  name                  = var.name
+  region                = var.region
+  network               = data.google_compute_network.network.self_link
+  subnetwork            = data.google_compute_subnetwork.network.self_link
+  allow_global_access   = var.global_access
+  target                = google_compute_region_target_http_proxy.http[0].id
+  load_balancing_scheme = "INTERNAL_MANAGED"  
+  ip_address            = var.ip_address
+  ip_protocol           = var.ip_protocol
+  port_range            = 80  
+  all_ports             = var.all_ports
+  service_label         = var.service_label
+  labels                = var.labels
+}
+
 resource "google_compute_forwarding_rule" "default" {
+  count                 = var.lb_type == "HTTP" ? 0 : 1
   project               = var.project
   name                  = var.name
   region                = var.region
